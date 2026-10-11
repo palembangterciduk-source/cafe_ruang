@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>"CAFE RUANG"</title> 
-
+  <title>Kopi & Ruang Senja | Self-Order & klikQRIS</title>
   <style>
-    body {
+    body, html {
       margin: 0;
       padding: 0;
-      overflow: hidden; /* Biar ga ada scrollbar */
-      background-color: #0d1117; /* Warna background gelap biar pas loading ga silau */
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #261D17;
     }
     iframe {
       border: none;
@@ -23,7 +23,30 @@
 </head>
 <body>
 
-  <iframe src="https://script.google.com/macros/s/AKfycbx8VfPdT_GVsR-jMBmW_Bsj1SlXT115q5643S4V8WsAeboeJMxqNc0JffT8XpfIpfQ_/exec"></iframe>
+  <iframe id="cafeFrame" allow="clipboard-read; clipboard-write; payment;"></iframe>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbx8VfPdT_GVsR-jMBmW_Bsj1SlXT115q5643S4V8WsAeboeJMxqNc0JffT8XpfIpfQ_/exec";
+    const frame = document.getElementById("cafeFrame");
+
+    // 1. Teruskan parameter URL (contoh: ?meja=05 atau ?role=kds) langsung ke src iframe
+    frame.src = GAS_URL + window.location.search;
+
+    // 2. Teruskan juga via postMessage saat frame selesai loading (Dual Insurance)
+    const urlParams = new URLSearchParams(window.location.search);
+    const meja = urlParams.get("meja");
+    const role = urlParams.get("role");
+
+    frame.onload = function() {
+      try {
+        frame.contentWindow.postMessage({
+          type: "CAFE_PARAMS",
+          meja: meja,
+          role: role
+        }, "*");
+      } catch (e) { }
+    };
+  </script>
 
 </body>
 </html>
